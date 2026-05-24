@@ -1,6 +1,8 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 
+const API_URL = "https://kylacaliwan30.pythonanywhere.com/api/tasks/";
+
 function App() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
@@ -9,27 +11,38 @@ function App() {
     fetchTasks();
   }, []);
 
-  const fetchTasks = () => {
-    fetch("https://kylacaliwan30.pythonanywhere.com/api/tasks/")
-      .then((res) => res.json())
-      .then((data) => setTasks(data));
+  // Fetch all tasks
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      setTasks(data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
   };
 
-  const addTask = () => {
+  // Add new task
+  const addTask = async () => {
     if (!title.trim()) return;
 
-    fetch("http://127.0.0.1:8000/api/tasks/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: title,
-      }),
-    }).then(() => {
+    try {
+      await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: title,
+        }),
+      });
+
       setTitle("");
       fetchTasks();
-    });
+
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   };
 
   return (
@@ -44,7 +57,9 @@ function App() {
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <button onClick={addTask}>Add</button>
+        <button onClick={addTask}>
+          Add
+        </button>
       </div>
 
       <ul>
