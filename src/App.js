@@ -10,7 +10,7 @@ function App() {
   }, []);
 
   const fetchTasks = () => {
-    fetch("http://127.0.0.1:8000/api/tasks/")
+    fetch("https://kylacaliwan30.pythonanywhere.com/api/tasks/")
       .then((res) => res.json())
       .then((data) => setTasks(data));
   };
