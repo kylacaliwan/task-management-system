@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 function App() {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("Pending");
 
   useEffect(() => {
     fetchTasks();
@@ -17,6 +16,8 @@ function App() {
   };
 
   const addTask = () => {
+    if (!title.trim()) return;
+
     fetch("http://127.0.0.1:8000/api/tasks/", {
       method: "POST",
       headers: {
@@ -24,11 +25,9 @@ function App() {
       },
       body: JSON.stringify({
         title: title,
-        status: status,
       }),
     }).then(() => {
       setTitle("");
-      setStatus("Pending");
       fetchTasks();
     });
   };
@@ -45,14 +44,6 @@ function App() {
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          <option value="Pending">Pending</option>
-          <option value="Complete">Complete</option>
-        </select>
-
         <button onClick={addTask}>Add</button>
       </div>
 
@@ -61,7 +52,7 @@ function App() {
           <li
             key={task.id}
             className={`task ${
-              task.status === "Complete" ? "done" : ""
+              task.status === "completed" ? "done" : ""
             }`}
           >
             <span>{task.title}</span>
